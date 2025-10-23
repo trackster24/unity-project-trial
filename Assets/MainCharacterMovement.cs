@@ -11,18 +11,26 @@ public class MainCharacterMovement : MonoBehaviour
 
     private Vector2 moveInput;
     private Vector2 lookInput;
+    private Vector3 movement = Vector3.zero;
 
     public float speed = 5f;
+    public float jumpSpeed = 20f;
+    public float graviity = 30f;
+    public float speedMultiplier = 2f;
 
     private InputAction moveAction;
     private InputAction lookAction;
+    private InputAction jumpAction;
+    private InputAction sprintAction;
 
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
 
         moveAction = playerControls.FindActionMap("Player").FindAction("Move");
+        jumpAction = playerControls.FindActionMap("Player").FindAction("Jump");
         lookAction = playerControls.FindActionMap("Player").FindAction("Look");
+        sprintAction = playerControls.FindActionMap("Player").FindAction("Sprint");
 
         moveAction.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         moveAction.canceled += ctx => moveInput = Vector2.zero;
@@ -47,10 +55,22 @@ public class MainCharacterMovement : MonoBehaviour
     {
         float verticalSpeed = moveInput.y * speed;
         float horizontalSpeed = moveInput.x * speed;
+        float speedInput = (sprintAction.ReadValue<float>() > 0) ? speedMultiplier : 1f;
 
-        Vector3 movement = new Vector3(horizontalSpeed, 0, verticalSpeed);
-        movement = transform.rotation * movement;
+        if (charController.isGrounded && jumpAction.triggered)
+        {
+            movement.y = jumpSpeed;
+        }
+        else
+        {
+            movement.y -= graviity * Time.deltaTime;
+        }
 
-        charController.Move(movement * Time.deltaTime);
+
+        movement.x = horizontalSpeed * speedInput;
+        movement.z = verticalSpeed * speedInput;
+        Vector3 totalMovement = transform.rotation * movement;
+
+        charController.Move(totalMovement * Time.deltaTime);
     }
 }

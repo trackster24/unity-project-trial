@@ -432,6 +432,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MainCharacterMovement
   playerControls: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   speed: 15
+  jumpSpeed: 20
+  graviity: 30
+  speedMultiplier: 2
 --- !u!65 &763082657
 BoxCollider:
   m_ObjectHideFlags: 0
