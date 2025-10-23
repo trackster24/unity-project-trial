@@ -18,10 +18,14 @@ public class MainCharacterMovement : MonoBehaviour
     public float graviity = 30f;
     public float speedMultiplier = 2f;
 
+    public GameObject bulletPrefab;
+    public Transform firePosition;
+
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction jumpAction;
     private InputAction sprintAction;
+    private InputAction shootAction;
 
     private void Awake()
     {
@@ -31,6 +35,7 @@ public class MainCharacterMovement : MonoBehaviour
         jumpAction = playerControls.FindActionMap("Player").FindAction("Jump");
         lookAction = playerControls.FindActionMap("Player").FindAction("Look");
         sprintAction = playerControls.FindActionMap("Player").FindAction("Sprint");
+        shootAction = playerControls.FindActionMap("Player").FindAction("Attack");
 
         moveAction.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         moveAction.canceled += ctx => moveInput = Vector2.zero;
@@ -43,6 +48,12 @@ public class MainCharacterMovement : MonoBehaviour
     {
         HandleLooking();
         HandleMoving();
+
+        if (shootAction.triggered)
+        {
+            GameObject bullet = Instantiate(bulletPrefab, firePosition.position, Quaternion.identity);
+            bullet.GetComponent<Rigidbody>().AddForce(firePosition.forward * 500, ForceMode.Impulse);
+        }
     }
 
     void HandleLooking()
