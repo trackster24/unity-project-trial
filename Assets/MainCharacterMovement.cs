@@ -1,25 +1,56 @@
+
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 public class MainCharacterMovement : MonoBehaviour
 {
+    public InputActionAsset playerControls;
+    private CharacterController charController;
+
+    private Vector2 moveInput;
+    private Vector2 lookInput;
+
     public float speed = 5f;
+
+    private InputAction moveAction;
+    private InputAction lookAction;
+
+    private void Awake()
+    {
+        charController = GetComponent<CharacterController>();
+
+        moveAction = playerControls.FindActionMap("Player").FindAction("Move");
+        lookAction = playerControls.FindActionMap("Player").FindAction("Look");
+
+        moveAction.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        moveAction.canceled += ctx => moveInput = Vector2.zero;
+
+        lookAction.performed += context => lookInput = context.ReadValue<Vector2>();
+        lookAction.canceled += context => lookInput = Vector2.zero;
+    }
 
     void Update()
     {
-        Vector2 input = Vector2.zero;
+        HandleLooking();
+        HandleMoving();
+    }
 
-        if (Keyboard.current.wKey.isPressed)
-            input.y += 1;
-        if (Keyboard.current.sKey.isPressed)
-            input.y -= 1;
-        if (Keyboard.current.aKey.isPressed)
-            input.x -= 1;
-        if (Keyboard.current.dKey.isPressed)
-            input.x += 1;
+    void HandleLooking()
+    {
+        float mouseXRotation = lookInput.x;
+        transform.Rotate(0, mouseXRotation, 0);
+    }
 
-        Vector3 move = new Vector3(input.x, 0, input.y).normalized;
+    void HandleMoving()
+    {
+        float verticalSpeed = moveInput.y * speed;
+        float horizontalSpeed = moveInput.x * speed;
 
-        transform.Translate(move * speed * Time.deltaTime);
+        Vector3 movement = new Vector3(horizontalSpeed, 0, verticalSpeed);
+        movement = transform.rotation * movement;
+
+        charController.Move(movement * Time.deltaTime);
     }
 }
