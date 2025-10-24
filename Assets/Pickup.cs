@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-    public Item item = new Item("Item Name", 1);
-    public GameObject itemPrefab;
+    public string itemName = "Item Name";
+    public int itemCount = 1;
 
     void OnTriggerEnter(Collider collider)
     {
