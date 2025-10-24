@@ -71,7 +71,7 @@ public class MainCharacterMovement : MonoBehaviour
 
         if (charController.isGrounded)
         {
-            jumpCounter = 2;
+            jumpCounter = 3;
             if (jumpAction.triggered)
             {
                 movement.y = jumpSpeed;
