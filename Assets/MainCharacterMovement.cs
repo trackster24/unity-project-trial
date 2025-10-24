@@ -26,6 +26,7 @@ public class MainCharacterMovement : MonoBehaviour
     private InputAction jumpAction;
     private InputAction sprintAction;
     private InputAction shootAction;
+    private int jumpCounter = 2;
 
     private void Awake()
     {
@@ -68,9 +69,19 @@ public class MainCharacterMovement : MonoBehaviour
         float horizontalSpeed = moveInput.x * speed;
         float speedInput = (sprintAction.ReadValue<float>() > 0) ? speedMultiplier : 1f;
 
-        if (charController.isGrounded && jumpAction.triggered)
+        if (charController.isGrounded)
+        {
+            jumpCounter = 2;
+            if (jumpAction.triggered)
+            {
+                movement.y = jumpSpeed;
+                jumpCounter -= 1;
+            }
+        }
+        else if (jumpAction.triggered && jumpCounter > 0)
         {
             movement.y = jumpSpeed;
+            jumpCounter -= 1;
         }
         else
         {
