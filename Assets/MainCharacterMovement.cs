@@ -20,23 +20,29 @@ public class MainCharacterMovement : MonoBehaviour
 
     public GameObject bulletPrefab;
     public Transform firePosition;
+    public EquipmentManager equipmentManager;
 
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction jumpAction;
     private InputAction sprintAction;
     private InputAction shootAction;
+    private InputAction equipAction;
     private int jumpCounter = 2;
+    private int equippedItemCounter = -1;
 
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
+        equipmentManager = GetComponent<EquipmentManager>();
 
         moveAction = playerControls.FindActionMap("Player").FindAction("Move");
         jumpAction = playerControls.FindActionMap("Player").FindAction("Jump");
         lookAction = playerControls.FindActionMap("Player").FindAction("Look");
         sprintAction = playerControls.FindActionMap("Player").FindAction("Sprint");
         shootAction = playerControls.FindActionMap("Player").FindAction("Attack");
+        equipAction = playerControls.FindActionMap("Player").FindAction("Equip");
+
 
         moveAction.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         moveAction.canceled += ctx => moveInput = Vector2.zero;
@@ -49,6 +55,7 @@ public class MainCharacterMovement : MonoBehaviour
     {
         HandleLooking();
         HandleMoving();
+        HandleEquipping();
 
         if (shootAction.triggered)
         {
@@ -94,5 +101,20 @@ public class MainCharacterMovement : MonoBehaviour
         Vector3 totalMovement = transform.rotation * movement;
 
         charController.Move(totalMovement * Time.deltaTime);
+    }
+
+    void HandleEquipping()
+    {
+        if (equipAction.triggered)
+        {
+            int count = Inventory.instance.items.Count;
+            if (count > 0)
+            {
+                equippedItemCounter = (equippedItemCounter == (count - 1)) ? 0 : ++equippedItemCounter;
+
+                Item nextItem = Inventory.instance.items[equippedItemCounter];
+                equipmentManager.EquipItem(nextItem);
+            }
+        }
     }
 }

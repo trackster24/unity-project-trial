@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3581597385038563265}
   - component: {fileID: 4727821842199976755}
   m_Layer: 0
-  m_Name: PickupObject
+  m_Name: Weapon
   m_TagString: PickupItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -126,6 +126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe9d34db6df7c5419b6cee5a8373733, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  item:
-    name: Staff
-    count: 1
+  itemName: Staff
+  itemCount: 1
+  itemPrefab: {fileID: 5038451274263509108}
