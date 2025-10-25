@@ -1,7 +1,8 @@
 using UnityEngine;
 [System.Serializable]
 
-public class Item
+[CreateAssetMenu(fileName = "InventoryItem", menuName = "Inevtory/Items")]
+public class Item : ScriptableObject
 {
     public string name;
     public int count;
