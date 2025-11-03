@@ -8,29 +8,37 @@ public class MainCharacterMovement : MonoBehaviour
 {
     public InputActionAsset playerControls;
     private CharacterController charController;
+    private Camera mainCamera;
 
     private Vector2 moveInput;
     private Vector2 lookInput;
     private Vector3 movement = Vector3.zero;
 
-    public float speed = 5f;
-    public float jumpSpeed = 20f;
-    public float graviity = 30f;
-    public float speedMultiplier = 2f;
+    // Movement Constants
+    private float speed = 5f;
+    private float jumpSpeed = 8f;
+    private float gravity = 20f;
+    private float speedMultiplier = 2f;
+    private float verticalRotation = 0;
+    private int jumpCounter = 2;
+    private float mouseSensitivity = .5f;
 
+    // Attached Game Objects
     public GameObject bulletPrefab;
     public Transform firePosition;
 
+    // Actions
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction jumpAction;
     private InputAction sprintAction;
     private InputAction shootAction;
-    private int jumpCounter = 2;
+
 
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
+        mainCamera = GetComponentInChildren<Camera>();
 
         moveAction = playerControls.FindActionMap("Player").FindAction("Move");
         jumpAction = playerControls.FindActionMap("Player").FindAction("Jump");
@@ -43,6 +51,8 @@ public class MainCharacterMovement : MonoBehaviour
 
         lookAction.performed += context => lookInput = context.ReadValue<Vector2>();
         lookAction.canceled += context => lookInput = Vector2.zero;
+
+        Cursor.visible = false;
     }
 
     void Update()
@@ -53,14 +63,18 @@ public class MainCharacterMovement : MonoBehaviour
         if (shootAction.triggered)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePosition.position, Quaternion.identity);
-            bullet.GetComponent<Rigidbody>().AddForce(firePosition.forward * 500, ForceMode.Impulse);
+            bullet.GetComponent<Rigidbody>().AddForce(firePosition.forward * 100, ForceMode.Impulse);
         }
     }
 
     void HandleLooking()
     {
-        float mouseXRotation = lookInput.x;
+        float mouseXRotation = lookInput.x * mouseSensitivity;
         transform.Rotate(0, mouseXRotation, 0);
+
+        verticalRotation -= lookInput.y * mouseSensitivity;
+        verticalRotation = Mathf.Clamp(verticalRotation, -20, 10);
+        mainCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
     }
 
     void HandleMoving()
@@ -71,7 +85,7 @@ public class MainCharacterMovement : MonoBehaviour
 
         if (charController.isGrounded)
         {
-            jumpCounter = 3;
+            jumpCounter = 2;
             if (jumpAction.triggered)
             {
                 movement.y = jumpSpeed;
@@ -85,7 +99,7 @@ public class MainCharacterMovement : MonoBehaviour
         }
         else
         {
-            movement.y -= graviity * Time.deltaTime;
+            movement.y -= gravity * Time.deltaTime;
         }
 
 
