@@ -1,8 +1,5 @@
-
-using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
 public class MainCharacterMovement : MonoBehaviour
 {
@@ -24,7 +21,7 @@ public class MainCharacterMovement : MonoBehaviour
     private float mouseSensitivity = .5f;
 
     // Attached Game Objects
-    public GameObject bulletPrefab;
+    public GameObject fireballPrefab;
     public Transform firePosition;
 
     // Actions
@@ -62,8 +59,8 @@ public class MainCharacterMovement : MonoBehaviour
 
         if (shootAction.triggered)
         {
-            GameObject bullet = Instantiate(bulletPrefab, firePosition.position, Quaternion.identity);
-            bullet.GetComponent<Rigidbody>().AddForce(firePosition.forward * 100, ForceMode.Impulse);
+            GameObject fireball = Instantiate(fireballPrefab, firePosition.position, Quaternion.identity);
+            fireball.GetComponent<Rigidbody>().AddForce(firePosition.forward * 100, ForceMode.Impulse);
         }
     }
 

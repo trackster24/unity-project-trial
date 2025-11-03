@@ -1,7 +1,6 @@
-using TMPro;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Fireball : MonoBehaviour
 {
    
     private void OnCollisionEnter(Collision collision)
